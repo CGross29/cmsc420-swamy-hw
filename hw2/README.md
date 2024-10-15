@@ -42,7 +42,7 @@ For example, in the landscape with heights [1, 2, 5, 7, 6, 5, 3, -1, 9]:
 - -1 has a depth of 4
 
 **Definitions:**
-- A __descend point__ is a landform that can be part of a descend sequence. In other words, its height is lower than its immediate predecessor, or higher than its immediate successor. <br> E.g. 5, 3 and 3 are descend points in [1, 5, 3, 2].
+- A __descend point__ is a landform that can be part of a descend sequence. In other words, its height is lower than its immediate predecessor, or higher than its immediate successor. <br> E.g. 5, 3 and 2 are descend points in [1, 5, 3, 2].
 - An __ascend point__ is a landform that can be part of an ascend sequence. In other words, its height is higher than its immediate predecessor, or lower than its immediate successor. <br> E.g. 1 and 5 are ascend points in [1, 5, 3, 2].
 - A __valley__ is a landform that is lower than its neighboring landforms.
 - A __peak__ is a landform that is higher than its neighboring landforms.
@@ -64,6 +64,7 @@ An element $A_{i}$ is a peak point if and only if:
 - For $0 < i < n-1$: $A_{i} > A_{i-1}$ and $A_{i} > A_{i+1}$
 
 Let $D(i)$ be the depth of a descend point at index $i$.
+- $D(0) = 0$
 - $D(i) = 0$ if $A_{i}$ is a peak point
 - $D(i) = D(i-1) + 1$ if $A_{i} < A_{i-1}$
 
@@ -77,7 +78,7 @@ Let $D(i)$ be the depth of a descend point at index $i$.
 4. Handle edge cases and maintain the landscape's integrity after operations.
 5. Ensure efficient implementation of all operations.
 
-**Important Note:** As with the previous homework, Java standard collections libraries (e.g., `ArrayList`, `HashMap`, `HashSet`, etc.) are not to be used. You **should not import any classes from other libraries** (e.g., `java.util.*`). Only primitive data types and their arrays (e.g., `int[] values`) can be used. However, you are encouraged to implement your own data structures using classes. You can either create a new class in the same file or create a new file and submit it alongside `TreasureValleyExplorer.java`.
+**Important Note:** You may use standard library constructs from java.util in your solution, however your score will receive a 20% bonus if you implement without using any java.util classes (aside from java.util.Random which may be useful for certain data structures). You can either create a new class in the same file or create a new file and submit it alongside `TreasureValleyExplorer.java`. 
 
 ## :footprints: Example Expedition
 
@@ -105,7 +106,7 @@ Depths:     [ 0,  1,  0,  1,  0,  0,  1,  2,  3,  0]
 ```
 ![New Landscape](visualization_step1.png)
 
-3. `insertAtMostValuableValley(7, 22, 1)` inserts a new landform of height 7 with value 22 before the most valuable valley at depth 1 (index 1), returning `true`.
+3. `insertAtLeastValuableValley(2, 22, 1)` inserts a new landform of height 2 with value 22 before the least valuable valley at depth 1 (index 1), returning `true`.
 ```
 New landscape:
 Index:      [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10]
@@ -115,9 +116,9 @@ Depths:     [ 0,  1,  2,  0,  1,  0,  0,  1,  2,  3,  0]
 ```
 ![New Landscape](visualization_step2.png)
 
-4. `insertAtLeastValuableValley(10, 9, 2)` attempts to insert a new landform of height 10 with value 9 at the least valuable valley at depth 2, but since it's not possible, it returns `false`.
+4. `insertAtLeastValuableValley(10, 9, 4)` attempts to insert a new landform of height 10 with value 9 at the least valuable valley at depth 2, but since it's not possible, it returns `false`.
 
-5. `getLeastValuableValley(2)` returns `null` since there is no valley at depth 2.
+5. `getLeastValuableValley(5)` returns `null` since there is no valley at depth 5.
 6. `getLeastValuableValley(3)` returns `(3, 2)`, the only valley at depth 3 (index 9).
 
 Final operations output sequence looks like:
