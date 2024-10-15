@@ -1,9 +1,10 @@
+import java.util.*;
 /**
  * A convenient class that stores a pair of integers.
  * DO NOT MODIFY THIS CLASS.
  */
 
-class IntPair {
+ class IntPair {
     // Make the fields final to ensure they cannot be changed after initialization
     public final int first;
     public final int second;
@@ -41,11 +42,16 @@ class IntPair {
  * DO NOT MODIFY THE SIGNATURE OF THE METHODS PROVIDED IN THIS CLASS.
  * You are encouraged to add methods and variables in the class as needed.
  *
- * @author <Your Name goes here>
+ * @author <Corey Gross>
  */
 public class TreasureValleyExplorer {
 
     // Create instance variables here.
+    private Map<Integer, TreeSet<IntPair>> valleysByDepth;
+
+    private final Comparator<IntPair> valleyComparator = Comparator
+        .comparingInt((IntPair p) -> p.second)
+        .thenComparingInt(p -> p.first);
 
     /**
      * Constructor to initialize the TreasureValleyExplorer with the given heights
@@ -58,7 +64,31 @@ public class TreasureValleyExplorer {
      *                of points in the landscape.
      */
     public TreasureValleyExplorer(int[] heights, int[] values) {
-        // TODO: Implement the constructor.
+        if (heights == null || values == null) {
+            throw new IllegalArgumentException("null values");
+        }
+        if (heights.length != values.length) {
+            throw new IllegalArgumentException("heights and values arrays are not equal");
+        }
+
+        this.valleysByDepth = new HashMap<>();
+        int currDepth = 0;
+        int lastHeight = heights[0];
+
+        for (int i = 0; i < heights.length; i++) {
+            if (currDepth > 0 && heights[i] > lastHeight) {
+                currDepth = 0;  
+            }
+            if (heights[i] < lastHeight) {
+                currDepth++;  
+            }
+
+            IntPair newValley = new IntPair(heights[i], values[i]);
+            TreeSet<IntPair> valleys = valleysByDepth.computeIfAbsent(currDepth, k -> new TreeSet<>(valleyComparator));
+            valleys.add(newValley);
+
+            lastHeight = heights[i];
+        }
     }
 
     /**
@@ -68,8 +98,7 @@ public class TreasureValleyExplorer {
      * @return true if the landscape is empty, false otherwise.
      */
     public boolean isEmpty() {
-        // TODO: Implement the isEmpty method.
-        return false;
+        return valleysByDepth.isEmpty();
     }
 
     /**
@@ -83,8 +112,8 @@ public class TreasureValleyExplorer {
      * @return true if the insertion is successful, false otherwise
      */
     public boolean insertAtMostValuableValley(int height, int value, int depth) {
-        // TODO: Implement the insertAtMostValuableValley method
-        return false;
+        TreeSet<IntPair> valleys = valleysByDepth.computeIfAbsent(depth, k -> new TreeSet<>(valleyComparator));
+        return valleys.add(new IntPair(height, value));
     }
 
     /**
@@ -98,8 +127,7 @@ public class TreasureValleyExplorer {
      * @return true if the insertion is successful, false otherwise
      */
     public boolean insertAtLeastValuableValley(int height, int value, int depth) {
-        // TODO: Implement the insertAtLeastValuableValley method
-        return false;
+        return insertAtMostValuableValley(height, value, depth);
     }
 
     /**
@@ -112,8 +140,16 @@ public class TreasureValleyExplorer {
      * @return null if no valleys of the specified depth exist
      */
     public IntPair removeMostValuableValley(int depth) {
-        // TODO: Implement the removeMostValuableValley method
-        return null;
+        TreeSet<IntPair> valleys = valleysByDepth.get(depth);
+        if (valleys == null || valleys.isEmpty()) {
+            return null;
+        }
+        IntPair mostValuable = valleys.last(); 
+        valleys.remove(mostValuable);
+        if (valleys.isEmpty()) {
+            valleysByDepth.remove(depth); 
+        }
+        return mostValuable;
     }
 
     /**
@@ -126,8 +162,16 @@ public class TreasureValleyExplorer {
      * @return null if no valleys of the specified depth exist
      */
     public IntPair removeLeastValuableValley(int depth) {
-        // TODO: Implement the removeLeastValuableValley method
-        return null;
+        TreeSet<IntPair> valleys = valleysByDepth.get(depth);
+        if (valleys == null || valleys.isEmpty()) {
+            return null; 
+        }
+        IntPair leastValuable = valleys.first(); 
+        valleys.remove(leastValuable);
+        if (valleys.isEmpty()) {
+            valleysByDepth.remove(depth);
+        }
+        return leastValuable;
     }
 
     /**
@@ -141,8 +185,11 @@ public class TreasureValleyExplorer {
      * @return null if no valleys of the specified depth exist
      */
     public IntPair getMostValuableValley(int depth) {
-        // TODO: Implement the getMostValuableValleyValue method
-        return null;
+        TreeSet<IntPair> valleys = valleysByDepth.get(depth);
+        if (valleys == null || valleys.isEmpty()) {
+            return null; 
+        }
+        return valleys.last(); 
     }
 
     /**
@@ -156,8 +203,11 @@ public class TreasureValleyExplorer {
      * @return null if no valleys of the specified depth exist
      */
     public IntPair getLeastValuableValley(int depth) {
-        // TODO: Implement the getLeastValuableValleyValue method
-        return null;
+        TreeSet<IntPair> valleys = valleysByDepth.get(depth);
+        if (valleys == null || valleys.isEmpty()) {
+            return null; // No valleys at the specified depth
+        }
+        return valleys.first(); 
     }
 
     /**
@@ -166,10 +216,9 @@ public class TreasureValleyExplorer {
      * @param depth The depth that we want to count valleys for
      *
      * @return The number of valleys of the specified depth
-     * @return null if no valleys of the specified depth exist
      */
     public int getValleyCount(int depth) {
-        // TODO: Implement the getValleyCount method
-        return 0;
+        TreeSet<IntPair> valleys = valleysByDepth.get(depth);
+        return valleys == null ? 0 : valleys.size();
     }
 }
