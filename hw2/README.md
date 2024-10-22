@@ -20,9 +20,9 @@ The class should have the following methods:
 
 2. `boolean insertAtLeastValuableValley(int height, int value, int depth)`: Similar to `insertAtMostValuableValley`, but inserts at the position (before) of the least valuable valley point at the specified depth. Returns `true` if the insertion is successful, `false` otherwise.
 
-3. `IntPair removeMostValuableValley(int depth)`: Removes the most valuable valley point at the specified depth. It is guaranteed that at least one valley point exists at the specified depth.
+3. `IntPair removeMostValuableValley(int depth)`: Removes the most valuable valley point at the specified depth.
 
-4. `IntPair removeLeastValuableValley(int depth)`: Similar to `removeMostValuableValley`, but removes the least valuable valley point at the specified depth. It is guaranteed that at least one valley point exists at the specified depth.
+4. `IntPair removeLeastValuableValley(int depth)`: Similar to `removeMostValuableValley`, but removes the least valuable valley point at the specified depth.
 
 5. `IntPair getMostValuableValley(int depth)`: Returns the height and value of the most valuable valley point at the specified depth as an `IntPair`. If no valley point exists at the specified depth, the method should return `null`.
 
@@ -116,7 +116,7 @@ Depths:     [ 0,  1,  2,  0,  1,  0,  0,  1,  2,  3,  0]
 ```
 ![New Landscape](visualization_step2.png)
 
-4. `insertAtLeastValuableValley(10, 9, 4)` attempts to insert a new landform of height 10 with value 9 at the least valuable valley at depth 2, but since it's not possible, it returns `false`.
+4. `insertAtLeastValuableValley(10, 9, 4)` attempts to insert a new landform of height 10 with value 9 at the least valuable valley at depth 4, but since it's not possible, it returns `false`.
 
 5. `getLeastValuableValley(5)` returns `null` since there is no valley at depth 5.
 6. `getLeastValuableValley(3)` returns `(3, 2)`, the only valley at depth 3 (index 9).
