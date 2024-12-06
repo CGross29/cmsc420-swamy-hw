@@ -1,4 +1,5 @@
-import java.lang.String;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Dictionary class that stores words and associates them with their definitions
@@ -7,7 +8,16 @@ public class Dictionary {
     /**
      * Constructor to initialize the Dictionary
      */
+    private static class Node {
+        Map<Character, Node> children = new HashMap<>();
+        boolean isWord = false;
+        String definition = null;
+    }
+
+    private final Node root;
+
     public Dictionary() {
+        root = new Node();
     }
 
     /**
@@ -19,7 +29,15 @@ public class Dictionary {
      * @param definition The definition we want to associate with the word
      */
     public void add(String word, String definition) {
-        // TODO
+        if (word == null || word.isEmpty()) return;
+
+        Node current = root;
+        for (char c : word.toCharArray()) {
+            current.children.putIfAbsent(c, new Node());
+            current = current.children.get(c);
+        }
+        current.isWord = true;
+        current.definition = definition;
     }
 
     /**
@@ -28,7 +46,27 @@ public class Dictionary {
      * @param word The word we want to remove from our dictionary
      */
     public void remove(String word) {
-        // TODO
+        removeHelper(root, word, 0);
+    }
+
+    private boolean removeHelper(Node node, String word, int depth) {
+        if (node == null) return false;
+
+        if (depth == word.length()) {
+            if (!node.isWord) return false;
+            node.isWord = false;
+            node.definition = null;
+            return node.children.isEmpty();
+        }
+
+        char c = word.charAt(depth);
+        Node child = node.children.get(c);
+        if (removeHelper(child, word, depth + 1)) {
+            node.children.remove(c);
+            return !node.isWord && node.children.isEmpty();
+        }
+
+        return false;
     }
 
     /**
@@ -39,7 +77,8 @@ public class Dictionary {
      * @return The definition of the word, or null if not found
      */
     public String getDefinition(String word) {
-        return null;
+        Node node = findNode(word);
+        return (node != null && node.isWord) ? node.definition : null;
     }
 
     /**
@@ -52,7 +91,33 @@ public class Dictionary {
      * @return The sequence representation, or null if word not found
      */
     public String getSequence(String word) {
-        return null;
+        if (word == null || word.isEmpty()){
+            return null;
+        }
+
+        Node current = root;
+        StringBuilder sequence = new StringBuilder();
+        boolean foundPrefix = false;
+
+        for (char c : word.toCharArray()) {
+            if (!current.children.containsKey(c)){
+                return null;
+            }
+            current = current.children.get(c);
+            sequence.append(c);
+            if (current.isWord) {
+                sequence.append('-');
+                foundPrefix = true;
+            }
+        }
+
+        if (!foundPrefix){
+            return word;
+        }
+        if (sequence.charAt(sequence.length() - 1) == '-') {
+            sequence.setLength(sequence.length() - 1);
+        }
+        return sequence.toString();
     }
 
     /**
@@ -62,7 +127,16 @@ public class Dictionary {
      * @return The number of words that start with the prefix
      */
     public int countPrefix(String prefix) {
-        return 0;
+        Node node = findNode(prefix);
+        return (node != null) ? countWords(node) : 0;
+    }
+
+    private int countWords(Node node) {
+        int count = node.isWord ? 1 : 0;
+        for (Node child : node.children.values()) {
+            count += countWords(child);
+        }
+        return count;
     }
 
     /**
@@ -70,6 +144,39 @@ public class Dictionary {
      * This operation should not change the behavior of any other methods
      */
     public void compress() {
-        // TODO
+        compressHelper(root);
+    }
+
+    private void compressHelper(Node node) {
+        if (node == null){
+            return;
+        }
+
+        for (char c : node.children.keySet()) {
+            Node child = node.children.get(c);
+            compressHelper(child);
+
+            if (child.children.size() == 1 && !child.isWord) {
+                char grandchildKey = child.children.keySet().iterator().next();
+                Node grandchild = child.children.get(grandchildKey);
+
+                Node merged = new Node();
+
+                merged.children.putAll(grandchild.children);
+                merged.isWord = grandchild.isWord;
+                merged.definition = grandchild.definition;
+
+                node.children.put(c, merged);
+            }
+        }
+    }
+
+    private Node findNode(String prefix) {
+        Node current = root;
+        for (char c : prefix.toCharArray()) {
+            current = current.children.get(c);
+            if (current == null) return null;
+        }
+        return current;
     }
 }
