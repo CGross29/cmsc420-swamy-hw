@@ -2,12 +2,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dictionary class that stores words and associates them with their definitions
- */
+* Dictionary class that stores words and associates them with their definitions
+*/
 public class Dictionary {
     /**
-     * Constructor to initialize the Dictionary
-     */
+    * Constructor to initialize the Dictionary
+    */
     private static class Node {
         Map<Character, Node> children = new HashMap<>();
         boolean isWord = false;
@@ -21,13 +21,13 @@ public class Dictionary {
     }
 
     /**
-     * A method to add a new word to the dictionary
-     * If the word is already in the dictionary, this method will change its
-     * definition
-     *
-     * @param word       The word we want to add to our dictionary
-     * @param definition The definition we want to associate with the word
-     */
+    * A method to add a new word to the dictionary
+    * If the word is already in the dictionary, this method will change its
+    * definition
+    *
+    * @param word       The word we want to add to our dictionary
+    * @param definition The definition we want to associate with the word
+    */
     public void add(String word, String definition) {
         if (word == null || word.isEmpty()) return;
 
@@ -41,10 +41,10 @@ public class Dictionary {
     }
 
     /**
-     * A method to remove a word from the dictionary
-     *
-     * @param word The word we want to remove from our dictionary
-     */
+    * A method to remove a word from the dictionary
+    *
+    * @param word The word we want to remove from our dictionary
+    */
     public void remove(String word) {
         removeHelper(root, word, 0);
     }
@@ -70,26 +70,26 @@ public class Dictionary {
     }
 
     /**
-     * A method to get the definition associated with a word from the dictionary
-     * Returns null if the word is not in the dictionary
-     *
-     * @param word The word we want to get the definition for
-     * @return The definition of the word, or null if not found
-     */
+    * A method to get the definition associated with a word from the dictionary
+    * Returns null if the word is not in the dictionary
+    *
+    * @param word The word we want to get the definition for
+    * @return The definition of the word, or null if not found
+    */
     public String getDefinition(String word) {
         Node node = findNode(word);
         return (node != null && node.isWord) ? node.definition : null;
     }
 
     /**
-     * A method to get a string representation of the sequence of nodes which would
-     * store the word
-     * in a compressed trie consisting of all words in the dictionary
-     * Returns null if the word is not in the dictionary
-     *
-     * @param word The word we want the sequence for
-     * @return The sequence representation, or null if word not found
-     */
+    * A method to get a string representation of the sequence of nodes which would
+    * store the word
+    * in a compressed trie consisting of all words in the dictionary
+    * Returns null if the word is not in the dictionary
+    *
+    * @param word The word we want the sequence for
+    * @return The sequence representation, or null if word not found
+    */
     public String getSequence(String word) {
         if (word == null || word.isEmpty()){
             return null;
@@ -121,11 +121,11 @@ public class Dictionary {
     }
 
     /**
-     * Gives the number of words in the dictionary with the given prefix
-     *
-     * @param prefix The prefix we want to count words for
-     * @return The number of words that start with the prefix
-     */
+    * Gives the number of words in the dictionary with the given prefix
+    *
+    * @param prefix The prefix we want to count words for
+    * @return The number of words that start with the prefix
+    */
     public int countPrefix(String prefix) {
         Node node = findNode(prefix);
         return (node != null) ? countWords(node) : 0;
@@ -140,9 +140,9 @@ public class Dictionary {
     }
 
     /**
-     * Compresses the trie by combining nodes with single children
-     * This operation should not change the behavior of any other methods
-     */
+    * Compresses the trie by combining nodes with single children
+    * This operation should not change the behavior of any other methods
+    */
     public void compress() {
         compressHelper(root);
     }
@@ -150,7 +150,7 @@ public class Dictionary {
     private void compressHelper(Node node) {
         if (node == null){
             return;
-            
+        }
 
         for (char c : node.children.keySet()) {
             Node child = node.children.get(c);
@@ -162,7 +162,7 @@ public class Dictionary {
 
                 Node merged = new Node();
 
-                merged.children.put(grandchildKey, grandchild);
+                merged.children.putAll(grandchild.children);
                 merged.isWord = grandchild.isWord;
                 merged.definition = grandchild.definition;
 
