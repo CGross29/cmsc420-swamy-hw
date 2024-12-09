@@ -150,7 +150,7 @@ public class Dictionary {
     private void compressHelper(Node node) {
         if (node == null){
             return;
-        }
+            
 
         for (char c : node.children.keySet()) {
             Node child = node.children.get(c);
@@ -162,7 +162,7 @@ public class Dictionary {
 
                 Node merged = new Node();
 
-                merged.children.putAll(grandchild.children);
+                merged.children.put(grandchildKey, grandchild);
                 merged.isWord = grandchild.isWord;
                 merged.definition = grandchild.definition;
 
